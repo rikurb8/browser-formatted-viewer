@@ -13,9 +13,12 @@ module.exports = {
     'package-lock.json',
     'web-ext-artifacts',
     '*.md',
-    '.web-ext-config.js',
+    '.web-ext-config.cjs',
     'PUBLISHING.md',
-    'README.md'
+    'README.md',
+    'dist',
+    'screenshots',
+    '.github'
   ],
   run: {
     startUrl: ['about:debugging#/runtime/this-firefox'],

@@ -20,7 +20,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     }).then(() => {
       // Open viewer page in a new tab
       browser.tabs.create({
-        url: browser.runtime.getURL("viewer.html")
+        url: browser.runtime.getURL("src/ui/viewer.html")
       });
     }).catch(error => {
       console.error("Error storing content:", error);

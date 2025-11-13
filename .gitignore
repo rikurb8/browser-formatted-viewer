@@ -5,6 +5,7 @@
 # Build artifacts
 web-ext-artifacts/
 ../format-and-view-source.zip
+dist/
 
 # Dependencies
 node_modules/

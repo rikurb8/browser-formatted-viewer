@@ -20,26 +20,55 @@ Format & View is a Firefox extension (Manifest V2) that formats and syntax-highl
 
 ## Architecture
 
+### Directory Structure
+```
+browser-formatted-viewer/
+├── src/
+│   ├── background/
+│   │   └── background.js      # Context menu and storage operations
+│   ├── content/
+│   │   └── viewer.js          # Main viewer page logic
+│   ├── formatters/
+│   │   ├── jsonFormatter.js   # JSON formatting module
+│   │   └── xmlFormatter.js    # XML formatting module
+│   ├── ui/
+│   │   ├── viewer.html        # Display page
+│   │   └── viewer.css         # Dark-themed UI styling
+│   ├── utils/
+│   │   ├── formatDetector.js  # Format detection logic
+│   │   └── historyManager.js  # History storage utilities
+│   ├── lib/                   # Third-party libraries
+│   │   ├── highlight.js
+│   │   ├── xml-formatter.js
+│   │   └── github-dark.min.css
+│   └── constants.js           # Shared constants
+├── icons/                     # Extension icons
+├── manifest.json              # Extension configuration
+└── package.json
+```
+
 ### Extension Flow
-1. **Context Menu Creation** (background.js): Creates "Format and Open in New Tab" menu item on extension install
-2. **Content Capture** (background.js): On menu click, captures selected text and stores in `browser.storage.local`
-3. **New Tab Display** (viewer.html): Opens viewer page in new tab
-4. **Format Detection** (viewer.js): Automatically detects JSON vs XML based on content structure
-5. **Formatting** (viewer.js):
-   - JSON: Uses native `JSON.stringify()` with 2-space indentation
-   - XML: Uses bundled xml-formatter library (lib/xml-formatter.js) with custom options
-6. **Syntax Highlighting** (viewer.js): Applies highlight.js with GitHub Dark theme
-7. **Cleanup** (viewer.js): Removes content from storage after display
+1. **Context Menu Creation** (src/background/background.js): Creates "Format and Open in New Tab" menu item on extension install
+2. **Content Capture** (src/background/background.js): On menu click, captures selected text and stores in `browser.storage.local`
+3. **New Tab Display** (src/ui/viewer.html): Opens viewer page in new tab
+4. **Format Detection** (src/utils/formatDetector.js): Automatically detects JSON vs XML based on content structure
+5. **Formatting**: Uses dedicated formatter modules
+   - JSON: src/formatters/jsonFormatter.js - native `JSON.stringify()` with 2-space indentation
+   - XML: src/formatters/xmlFormatter.js - bundled xml-formatter library with custom options
+6. **Syntax Highlighting** (src/content/viewer.js): Applies highlight.js with GitHub Dark theme
+7. **History Management** (src/utils/historyManager.js): Saves and manages snippet history
+8. **Cleanup** (src/content/viewer.js): Removes temporary content from storage after display
 
-### Key Files
-- **manifest.json**: Extension configuration (Manifest V2, permissions, background scripts)
-- **background.js**: Background script handling context menu and storage operations
-- **viewer.html**: Display page using bundled libraries from lib/ directory
-- **viewer.js**: Core formatting logic and format detection
-- **viewer.css**: Dark-themed UI styling (GitHub-inspired)
-- **lib/**: Bundled libraries (highlight.js, xml-formatter.js, github-dark.min.css)
+### Module Organization
+The codebase is organized into logical modules for better maintainability:
+- **Background scripts**: Extension lifecycle and context menu handling
+- **Content scripts**: Viewer page logic coordinating all modules
+- **Formatters**: Isolated formatting logic for each supported format
+- **Utils**: Reusable utilities (format detection, history management)
+- **UI**: HTML and CSS separated from logic
+- **Lib**: Third-party bundled libraries
 
-### Format Detection Logic (viewer.js:12-35)
+### Format Detection Logic (src/utils/formatDetector.js)
 The extension uses a multi-step detection approach:
 1. Check if content starts/ends with JSON brackets `{}` or `[]`
 2. Check for XML declaration `<?xml` or presence of tags `<...>`
@@ -62,11 +91,11 @@ This extension uses Firefox WebExtensions API (`browser.*` namespace). For Chrom
 - Service worker instead of background script
 
 ### Bundled Libraries Strategy
-Libraries are bundled locally in lib/ directory rather than loaded from CDN to ensure offline functionality and pass AMO review requirements. The .web-ext-config.js excludes documentation and build files from the packaged extension.
+Libraries are bundled locally in src/lib/ directory rather than loaded from CDN to ensure offline functionality and pass AMO review requirements. The .web-ext-config.js excludes documentation, build files, and old root-level files from the packaged extension.
 
 ## Testing Workflow
 
-1. Make code changes to background.js, viewer.js, or viewer.html
+1. Make code changes in the src/ directory
 2. Run `npm start` to launch Firefox with extension loaded
 3. Test with sample content:
    - JSON: `{"name":"John","age":30,"hobbies":["reading","coding"]}`
@@ -79,19 +108,25 @@ Libraries are bundled locally in lib/ directory rather than loaded from CDN to e
 ## Common Modifications
 
 ### Changing JSON Indentation
-Edit viewer.js:41 - Change the third parameter in `JSON.stringify(parsed, null, 2)`
+Edit src/formatters/jsonFormatter.js - Change the third parameter in `JSON.stringify(parsed, null, 2)`
 
 ### Changing XML Formatting Options
-Edit viewer.js:51-55 - Modify the xmlFormatter options object:
+Edit src/formatters/xmlFormatter.js - Modify the xmlFormatter options object:
 - `indentation`: Change spacing (default: '  ')
 - `collapseContent`: Toggle empty tag collapsing
 - `lineSeparator`: Modify line breaks
 
 ### Updating Highlight.js Theme
-Replace lib/github-dark.min.css with another highlight.js theme, and update viewer.html:9 link reference
+Replace src/lib/github-dark.min.css with another highlight.js theme, and update src/ui/viewer.html link reference
 
 ### Modifying UI Colors
-Edit viewer.css - Color variables are embedded throughout (not using CSS custom properties)
+Edit src/ui/viewer.css - Color variables are embedded throughout (not using CSS custom properties)
+
+### Adding New Formatters
+1. Create new formatter module in src/formatters/
+2. Add format detection logic in src/utils/formatDetector.js
+3. Load the module in src/ui/viewer.html
+4. Update src/content/viewer.js displayContent() function to handle new format
 
 ## Publishing to Mozilla Add-ons
 
