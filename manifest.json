@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Format & View",
+  "version": "1.0.0",
+  "description": "Format and syntax-highlight JSON/XML text in a new tab",
+
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "storage"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "icons": {
+    "48": "icons/icon-48.svg",
+    "96": "icons/icon-96.svg"
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/icon-48.svg",
+      "96": "icons/icon-96.svg"
+    },
+    "default_title": "Format & View"
+  }
+}

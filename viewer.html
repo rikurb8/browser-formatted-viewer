@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Format & View</title>
+
+  <!-- Highlight.js CSS - using GitHub Dark theme -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Format & View</h1>
+      <div id="format-type" class="format-badge"></div>
+    </header>
+
+    <div id="error-message" class="error hidden"></div>
+
+    <div id="code-container">
+      <pre><code id="code-content" class="language-json"></code></pre>
+    </div>
+
+    <div id="loading" class="loading">
+      <p>Loading content...</p>
+    </div>
+  </div>
+
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xml-formatter@3.6.3/dist/browser/xml-formatter.min.js"></script>
+
+  <!-- Viewer Logic -->
+  <script src="viewer.js"></script>
+</body>
+</html>
