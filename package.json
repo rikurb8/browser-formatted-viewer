@@ -10,7 +10,8 @@
     "package:source:clean": "rm -f ../format-and-view-source.zip",
     "start": "web-ext run --start-url https://json.org/example.html",
     "sign": "web-ext sign --api-key=$WEB_EXT_API_KEY --api-secret=$WEB_EXT_API_SECRET",
-    "test": "web-ext lint"
+    "test": "web-ext lint",
+    "commit": "npx tsx tools/commit-changes.ts"
   },
   "repository": {
     "type": "git",
@@ -43,5 +44,9 @@
       "*.md",
       ".web-ext-config.js"
     ]
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "zx": "^8.8.5"
   }
 }
