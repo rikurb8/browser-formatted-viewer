@@ -1,3 +1,12 @@
+// Import highlight.js and language modules
+import hljs from './lib/highlight.js';
+import json from './lib/highlight-json.js';
+import xml from './lib/highlight-xml.js';
+
+// Register language modules
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('xml', xml);
+
 // Get DOM elements
 const codeContent = document.getElementById('code-content');
 const codeContainer = document.getElementById('code-container');
