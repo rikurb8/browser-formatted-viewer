@@ -91,7 +91,12 @@ Return ONLY the commit message text, nothing else. Do not include any explanatio
   });
 
   if (response.content && response.content.length > 0 && response.content[0].type === 'text') {
-    return response.content[0].text.trim();
+    let message = response.content[0].text.trim();
+
+    // Strip markdown code fences if present (```...``` or ```text...```)
+    message = message.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/i, '');
+
+    return message.trim();
   } else {
     throw new Error('No content in Claude API response');
   }
