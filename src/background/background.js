@@ -33,6 +33,29 @@ browser.commands.onCommand.addListener((command) => {
         });
       }
     });
+  } else if (command === "save-link") {
+    // Save current tab's URL and title to history
+    browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
+      if (tabs[0]) {
+        const tab = tabs[0];
+        // Store link info for viewer to save
+        browser.storage.local.set({
+          linkToSave: {
+            url: tab.url,
+            title: tab.title,
+            favIconUrl: tab.favIconUrl,
+            timestamp: Date.now()
+          }
+        }).then(() => {
+          // Open viewer page to show confirmation
+          browser.tabs.create({
+            url: browser.runtime.getURL("src/ui/viewer.html")
+          });
+        }).catch(error => {
+          console.error("Error storing link:", error);
+        });
+      }
+    });
   }
 });
 

@@ -34,6 +34,13 @@
         "mac": "Command+Shift+L"
       },
       "description": "Format and open selected text in new tab"
+    },
+    "save-link": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U"
+      },
+      "description": "Save current page link to history"
     }
   },
 

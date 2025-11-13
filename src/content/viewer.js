@@ -88,19 +88,44 @@ async function displayHistoryList() {
     return;
   }
 
-  historyList.innerHTML = history.map(item => `
-    <div class="history-item" data-id="${item.id}">
-      <div class="history-item-header">
-        <span class="history-item-time">${formatTimestamp(item.timestamp)}</span>
-        <span class="history-item-format ${item.format}">${item.format.toUpperCase()}</span>
-        <button class="delete-history-btn" data-id="${item.id}" title="Delete">
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  `).join('');
+  historyList.innerHTML = history.map(item => {
+    if (item.type === 'link') {
+      // Render link item
+      const domain = new URL(item.url).hostname;
+      return `
+        <div class="history-item history-item-link" data-id="${item.id}" data-type="link" data-url="${item.url}">
+          <div class="history-item-header">
+            <span class="history-item-time">${formatTimestamp(item.timestamp)}</span>
+            <span class="history-item-format link">LINK</span>
+            <button class="delete-history-btn" data-id="${item.id}" title="Delete">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="history-item-content">
+            <div class="link-title">${item.title || item.url}</div>
+            <div class="link-domain">${domain}</div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Render snippet item
+      return `
+        <div class="history-item" data-id="${item.id}" data-type="snippet">
+          <div class="history-item-header">
+            <span class="history-item-time">${formatTimestamp(item.timestamp)}</span>
+            <span class="history-item-format ${item.format}">${item.format.toUpperCase()}</span>
+            <button class="delete-history-btn" data-id="${item.id}" title="Delete">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }).join('');
 
   // Add event listeners to history items
   document.querySelectorAll('.history-item').forEach(item => {
@@ -109,7 +134,17 @@ async function displayHistoryList() {
       if (e.target.closest('.delete-history-btn')) {
         return;
       }
-      loadHistoryItem(item.dataset.id);
+
+      if (item.dataset.type === 'link') {
+        // Open link in new tab
+        const url = item.dataset.url;
+        if (url) {
+          browser.tabs.create({ url: url });
+        }
+      } else {
+        // Load snippet
+        loadHistoryItem(item.dataset.id);
+      }
     });
   });
 
@@ -187,7 +222,26 @@ async function loadContent() {
     // Load and display history first
     await displayHistoryList();
 
-    // Retrieve new content from storage (if any)
+    // Check for link to save
+    const linkResult = await browser.storage.local.get(['linkToSave']);
+    if (linkResult.linkToSave) {
+      const linkData = linkResult.linkToSave;
+
+      // Save link to history
+      await saveLinkToHistory(linkData.url, linkData.title, linkData.favIconUrl);
+
+      // Update history display
+      await displayHistoryList();
+
+      // Clear temporary storage
+      browser.storage.local.remove('linkToSave');
+
+      // Show welcome screen with success message
+      showWelcome();
+      return;
+    }
+
+    // Retrieve new snippet content from storage (if any)
     const result = await browser.storage.local.get(['formatterContent']);
 
     if (!result.formatterContent) {

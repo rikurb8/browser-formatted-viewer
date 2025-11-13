@@ -9,13 +9,14 @@ async function loadHistory() {
   }
 }
 
-// Save to history
+// Save snippet to history
 async function saveToHistory(content, format) {
   try {
     const history = await loadHistory();
 
     const historyItem = {
       id: Date.now().toString(),
+      type: 'snippet',
       content: content,
       format: format,
       timestamp: Date.now()
@@ -31,6 +32,34 @@ async function saveToHistory(content, format) {
     return historyItem.id;
   } catch (error) {
     console.error('Error saving to history:', error);
+    return null;
+  }
+}
+
+// Save link to history
+async function saveLinkToHistory(url, title, favIconUrl = null) {
+  try {
+    const history = await loadHistory();
+
+    const historyItem = {
+      id: Date.now().toString(),
+      type: 'link',
+      url: url,
+      title: title || url,
+      favIconUrl: favIconUrl,
+      timestamp: Date.now()
+    };
+
+    // Add to beginning of array (most recent first)
+    history.unshift(historyItem);
+
+    // Save back to storage
+    await browser.storage.local.set({ formatHistory: history });
+
+    // Return the new item's ID
+    return historyItem.id;
+  } catch (error) {
+    console.error('Error saving link to history:', error);
     return null;
   }
 }

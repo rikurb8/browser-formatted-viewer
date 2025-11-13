@@ -127,6 +127,35 @@ body {
   color: #ffffff;
 }
 
+.history-item-format.link {
+  background-color: #a371f7;
+  color: #ffffff;
+}
+
+.history-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 20px;
+}
+
+.link-title {
+  font-size: 13px;
+  color: #c9d1d9;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-domain {
+  font-size: 11px;
+  color: #8b949e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .delete-history-btn {
   background: none;
   border: none;
