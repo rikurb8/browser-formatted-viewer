@@ -2,9 +2,16 @@
 *.xpi
 *.zip
 
+# Build artifacts
+web-ext-artifacts/
+../format-and-view-source.zip
+
 # Dependencies
 node_modules/
 package-lock.json
+
+# Environment files
+.env
 
 # OS files
 .DS_Store

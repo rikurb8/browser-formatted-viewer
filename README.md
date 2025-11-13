@@ -39,6 +39,21 @@ A Firefox extension that formats and syntax-highlights JSON and XML content in a
 - Enable `xpinstall.signatures.required` to `false` in `about:config` (not recommended for security reasons)
 - Submit to Mozilla Add-ons for signing
 
+## Publishing
+
+For detailed instructions on publishing this extension to Mozilla Add-ons (AMO), see [PUBLISHING.md](PUBLISHING.md).
+
+Quick start:
+```bash
+# Install dependencies
+npm install
+
+# Build the extension
+npm run build
+
+# The packaged extension will be in web-ext-artifacts/
+```
+
 ## Usage
 
 1. **Select Text**: Highlight JSON or XML text on any webpage
@@ -119,15 +134,31 @@ browser-formatted-viewer/
 ### Prerequisites
 
 - Firefox Browser (version 48+)
+- Node.js and npm (for build tools)
 - Basic understanding of WebExtensions API
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+```
+
+### Available Scripts
+
+- `npm start` - Run extension in Firefox for testing
+- `npm run lint` - Validate extension code
+- `npm run build` - Build and package the extension
+- `npm test` - Run linting tests
 
 ### Testing
 
 1. Make changes to the code
-2. If testing with temporary add-on:
+2. Run the extension: `npm start`
+3. Or if testing with temporary add-on:
    - Go to `about:debugging`
    - Click "Reload" next to the extension
-3. Test with various JSON/XML content
+4. Test with various JSON/XML content
 
 ### Debugging
 
